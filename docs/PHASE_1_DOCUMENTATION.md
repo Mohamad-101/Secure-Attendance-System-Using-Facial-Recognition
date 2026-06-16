@@ -392,10 +392,17 @@ Planned tasks:
 
 ## 12. References
 
-[1] M. Turk and A. Pentland, “Eigenfaces for Recognition,” Journal of Cognitive Neuroscience, 1991.
-[2] P. Viola and M. Jones, “Rapid Object Detection using a Boosted Cascade of Simple Features,” 2001.
-[3] N. Dalal and B. Triggs, “Histograms of Oriented Gradients for Human Detection,” 2005.
-[4] F. Schroff, D. Kalenichenko, and J. Philbin, “FaceNet: A Unified Embedding for Face Recognition and Clustering,” 2015.
-[5] D. King, “dlib-ml: A Machine Learning Toolkit,” Journal of Machine Learning Research, 2009.
-[6] J. Deng, J. Guo, N. Xue, and S. Zafeiriou, “ArcFace: Additive Angular Margin Loss for Deep Face Recognition,” 2019.
-[7] ISO/IEC 30107, “Information Technology — Biometric Presentation Attack Detection,” International Organization for Standardization.
+[1] M. Turk and A. Pentland, [“Eigenfaces for Recognition,”](https://direct.mit.edu/jocn/article/3/1/71/3025/Eigenfaces-for-Recognition) *Journal of Cognitive Neuroscience*, 1991.
+
+[2] P. Viola and M. Jones, [“Rapid Object Detection using a Boosted Cascade of Simple Features,”](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf) *CVPR*, 2001.
+
+[3] N. Dalal and B. Triggs, [“Histograms of Oriented Gradients for Human Detection,”](https://lear.inrialpes.fr/people/triggs/pubs/Dalal-cvpr05.pdf) *CVPR*, 2005.
+
+[4] F. Schroff, D. Kalenichenko, and J. Philbin, [“FaceNet: A Unified Embedding for Face Recognition and Clustering,”](https://arxiv.org/abs/1503.03832) *CVPR*, 2015.
+
+[5] D. E. King, [“dlib-ml: A Machine Learning Toolkit,”](https://jmlr.org/papers/v10/king09a.html) *Journal of Machine Learning Research*, 2009.
+
+[6] J. Deng, J. Guo, N. Xue, and S. Zafeiriou, [“ArcFace: Additive Angular Margin Loss for Deep Face Recognition,”](https://arxiv.org/abs/1801.07698) *CVPR*, 2019.
+
+[7] ISO/IEC 30107, [“Information Technology — Biometric Presentation Attack Detection,”](https://www.iso.org/standard/53227.html) International Organization for Standardization.
+
