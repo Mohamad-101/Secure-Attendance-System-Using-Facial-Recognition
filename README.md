@@ -1,3 +1,16 @@
+## Current Project Status
+
+This repository currently represents Phase 1 of the CCRI Secure Attendance System project.
+
+Phase 1 focuses on:
+- Literature review on facial recognition and biometric authentication systems
+- Study of face detection, face recognition, and attendance management techniques
+- Definition of system requirements and architecture
+- Development environment setup
+- Database and attendance management framework design
+
+Full face enrollment, real-time dashboard, reporting, analytics, and deployment are planned for later phases according to the CCRI project timeline.
+
 # Secure Attendance System with Face Authentication
 
 **Developer:** Mohamad El Saleh  
