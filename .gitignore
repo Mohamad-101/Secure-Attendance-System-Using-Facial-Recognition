@@ -18,3 +18,10 @@ face_data/
 *.png
 
 .DS_Store
+
+.venv/
+data/*.db
+data/*.sqlite
+__pycache__/
+*.pyc
+.streamlit/
