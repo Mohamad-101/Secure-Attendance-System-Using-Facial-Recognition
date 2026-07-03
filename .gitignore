@@ -1,20 +1,25 @@
+# Python cache
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
+# Virtual environments
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Databases
 *.db
 *.sqlite
 *.sqlite3
 
-.env
-venv/
-.venv/
-
+# Biometric/test data
+data/
 images/
 test_images/
 face_data/
-*.jpg
-*.jpeg
-*.png
 
+# System files
 .DS_Store
