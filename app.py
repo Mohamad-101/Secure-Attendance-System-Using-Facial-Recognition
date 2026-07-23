@@ -168,16 +168,111 @@ elif menu == "View Attendance Logs":
         st.info("No attendance logs found yet.")
     else:
         df = pd.DataFrame(logs)
-        st.dataframe(df, use_container_width=True)
 
-        csv_data = df.to_csv(index=False).encode("utf-8")
+        if "attendance_date" in df.columns:
+            df["attendance_date"] = pd.to_datetime(
+                df["attendance_date"],
+                errors="coerce"
+            ).dt.date
 
-        st.download_button(
-            label="Download Attendance Logs as CSV",
-            data=csv_data,
-            file_name="attendance_logs.csv",
-            mime="text/csv",
-        )
+        st.subheader("Filters")
+
+        filter_col1, filter_col2, filter_col3 = st.columns(3)
+
+        with filter_col1:
+            search_query = st.text_input(
+                "Search by Student ID or Name",
+                placeholder="Example: S001 or Mohamad",
+            )
+
+        with filter_col2:
+            available_dates = sorted(df["attendance_date"].dropna().unique())
+
+            if available_dates:
+                default_start_date = available_dates[0]
+                default_end_date = available_dates[-1]
+            else:
+                default_start_date = None
+                default_end_date = None
+
+            date_range = st.date_input(
+                "Filter by Date Range",
+                value=(default_start_date, default_end_date)
+                if default_start_date and default_end_date
+                else None,
+            )
+
+        with filter_col3:
+            status_options = sorted(df["status"].dropna().unique().tolist())
+
+            selected_status = st.multiselect(
+                "Filter by Status",
+                options=status_options,
+                default=status_options,
+            )
+
+        filtered_df = df.copy()
+
+        if search_query:
+            search_query = search_query.lower().strip()
+
+            filtered_df = filtered_df[
+                filtered_df["student_id"].astype(str).str.lower().str.contains(search_query)
+                | filtered_df["full_name"].astype(str).str.lower().str.contains(search_query)
+            ]
+
+        if date_range and len(date_range) == 2:
+            start_date, end_date = date_range
+
+            filtered_df = filtered_df[
+                (filtered_df["attendance_date"] >= start_date)
+                & (filtered_df["attendance_date"] <= end_date)
+            ]
+
+        if selected_status:
+            filtered_df = filtered_df[
+                filtered_df["status"].isin(selected_status)
+            ]
+
+        st.subheader("Summary")
+
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        with metric_col1:
+            st.metric("Total Records", len(filtered_df))
+
+        with metric_col2:
+            if "student_id" in filtered_df.columns:
+                st.metric("Unique Students", filtered_df["student_id"].nunique())
+            else:
+                st.metric("Unique Students", 0)
+
+        with metric_col3:
+            if "attendance_date" in filtered_df.columns:
+                st.metric("Attendance Days", filtered_df["attendance_date"].nunique())
+            else:
+                st.metric("Attendance Days", 0)
+
+        st.subheader("Filtered Attendance Records")
+
+        if filtered_df.empty:
+            st.warning("No records match the selected filters.")
+        else:
+            st.dataframe(
+                filtered_df,
+                use_container_width=True,
+                height=420,
+            )
+
+            csv_data = filtered_df.to_csv(index=False).encode("utf-8")
+
+            st.download_button(
+                label="Download Filtered Attendance Logs as CSV",
+                data=csv_data,
+                file_name="filtered_attendance_logs.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
 
 
 elif menu == "Database Status":
