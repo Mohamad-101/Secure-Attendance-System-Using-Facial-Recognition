@@ -92,6 +92,20 @@ def init_db():
         """
     )
 
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS security_logs (
+            security_log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_type TEXT NOT NULL,
+            message TEXT NOT NULL,
+            student_id TEXT,
+            full_name TEXT,
+            face_distance REAL,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+
     conn.commit()
     conn.close()
 
@@ -119,8 +133,7 @@ def create_or_update_user(
             full_name = excluded.full_name,
             email = excluded.email,
             role = excluded.role
-        """
-        ,
+        """,
         (student_id, full_name, email, role),
     )
 
@@ -155,8 +168,7 @@ def save_face_profile(user_id: int, encoding: np.ndarray):
         DO UPDATE SET
             face_encoding = excluded.face_encoding,
             enrollment_date = CURRENT_TIMESTAMP
-        """
-        ,
+        """,
         (user_id, encoding_blob),
     )
 
@@ -212,8 +224,7 @@ def get_or_create_today_session(session_name: str = "Daily Attendance") -> int:
         """
         INSERT OR IGNORE INTO attendance_sessions (session_name, session_date)
         VALUES (?, ?)
-        """
-        ,
+        """,
         (session_name, today),
     )
 
@@ -222,8 +233,7 @@ def get_or_create_today_session(session_name: str = "Daily Attendance") -> int:
         SELECT session_id
         FROM attendance_sessions
         WHERE session_name = ? AND session_date = ?
-        """
-        ,
+        """,
         (session_name, today),
     )
 
@@ -252,8 +262,7 @@ def record_attendance_log(
         SELECT log_id, check_in_time
         FROM attendance_logs
         WHERE user_id = ? AND attendance_date = ?
-        """
-        ,
+        """,
         (user_id, today),
     )
 
@@ -278,8 +287,7 @@ def record_attendance_log(
             face_distance
         )
         VALUES (?, ?, ?, ?, ?, ?)
-        """
-        ,
+        """,
         (user_id, session_id, today, now, status, face_distance),
     )
 
@@ -352,6 +360,85 @@ def get_attendance_logs_count() -> int:
     cursor = conn.cursor()
 
     cursor.execute("SELECT COUNT(*) AS count FROM attendance_logs")
+    result = cursor.fetchone()
+
+    conn.close()
+
+    return result["count"]
+
+
+def log_security_event(
+    event_type: str,
+    message: str,
+    student_id: str | None = None,
+    full_name: str | None = None,
+    face_distance: float | None = None,
+):
+    """
+    Save a failed, duplicate, or suspicious verification event.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO security_logs (
+            event_type,
+            message,
+            student_id,
+            full_name,
+            face_distance
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            event_type,
+            message,
+            student_id,
+            full_name,
+            face_distance,
+        ),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_security_logs():
+    """
+    Return all security logs ordered from newest to oldest.
+    """
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            security_log_id,
+            event_type,
+            message,
+            student_id,
+            full_name,
+            face_distance,
+            created_at
+        FROM security_logs
+        ORDER BY created_at DESC
+        """
+    )
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [dict(row) for row in rows]
+
+
+def get_security_logs_count() -> int:
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) AS count FROM security_logs")
     result = cursor.fetchone()
 
     conn.close()

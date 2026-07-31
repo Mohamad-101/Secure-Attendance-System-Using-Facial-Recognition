@@ -9,6 +9,9 @@ from src.database import (
     get_face_profiles_count,
     get_attendance_logs_count,
     get_attendance_logs,
+    log_security_event,
+    get_security_logs,
+    get_security_logs_count,
 )
 from src.face_enrollment import enroll_user
 from src.face_verification import verify_face
@@ -20,6 +23,7 @@ st.set_page_config(
     page_icon="📷",
     layout="wide",
 )
+
 
 st.markdown(
     """
@@ -46,20 +50,16 @@ st.markdown(
         section[data-testid="stSidebar"] {
             width: 260px !important;
         }
-
-        .small-note {
-            color: #777;
-            font-size: 0.9rem;
-        }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+
 init_db()
 
 st.title("Secure Attendance System")
-st.caption("Face Enrollment, Verification, and Attendance Logging")
+st.caption("Face Enrollment, Verification, Attendance Logging, and Security Monitoring")
 
 
 menu = st.sidebar.radio(
@@ -68,6 +68,7 @@ menu = st.sidebar.radio(
         "Register User",
         "Verify Attendance",
         "View Attendance Logs",
+        "Security Logs",
         "Database Status",
     ],
 )
@@ -92,6 +93,23 @@ def get_face_input(key_prefix: str):
         type=["jpg", "jpeg", "png"],
         key=f"{key_prefix}_upload",
     )
+
+
+def get_security_event_type(error_message: str, default_event_type: str):
+    """
+    Convert common face/image errors into clear security event types.
+    """
+
+    if "No face" in error_message:
+        return "NO_FACE_DETECTED"
+
+    if "Multiple" in error_message:
+        return "MULTIPLE_FACES_DETECTED"
+
+    if "No enrolled users" in error_message:
+        return "NO_ENROLLED_USERS"
+
+    return default_event_type
 
 
 if menu == "Register User":
@@ -136,8 +154,20 @@ if menu == "Register User":
                 st.write(f"**Role:** {result['role']}")
 
         except Exception as error:
+            error_message = str(error)
+
             with left_col:
-                st.error(str(error))
+                st.error(error_message)
+
+            event_type = get_security_event_type(
+                error_message=error_message,
+                default_event_type="ENROLLMENT_ERROR",
+            )
+
+            log_security_event(
+                event_type=event_type,
+                message=error_message,
+            )
 
 
 elif menu == "Verify Attendance":
@@ -199,6 +229,12 @@ elif menu == "Verify Attendance":
                         st.error(verification_result["message"])
                         st.write(f"**Best Distance:** {verification_result['distance']:.4f}")
 
+                        log_security_event(
+                            event_type="FAILED_VERIFICATION",
+                            message="Face verification failed. The face was not recognized.",
+                            face_distance=verification_result["distance"],
+                        )
+
                     else:
                         st.success("Face verified successfully.")
 
@@ -215,11 +251,31 @@ elif menu == "Verify Attendance":
 
                         if attendance_result["recorded"]:
                             st.success(attendance_result["message"])
+
                         else:
                             st.warning(attendance_result["message"])
 
+                            log_security_event(
+                                event_type="DUPLICATE_ATTENDANCE",
+                                message=attendance_result["message"],
+                                student_id=verification_result["student_id"],
+                                full_name=verification_result["full_name"],
+                                face_distance=verification_result["distance"],
+                            )
+
                 except Exception as error:
-                    st.error(str(error))
+                    error_message = str(error)
+                    st.error(error_message)
+
+                    event_type = get_security_event_type(
+                        error_message=error_message,
+                        default_event_type="VERIFICATION_ERROR",
+                    )
+
+                    log_security_event(
+                        event_type=event_type,
+                        message=error_message,
+                    )
 
 
 elif menu == "View Attendance Logs":
@@ -229,30 +285,236 @@ elif menu == "View Attendance Logs":
 
     if not logs:
         st.info("No attendance logs found yet.")
+
     else:
         df = pd.DataFrame(logs)
 
-        st.dataframe(
-            df,
-            use_container_width=True,
-            height=430,
-        )
+        if "attendance_date" in df.columns:
+            df["attendance_date"] = pd.to_datetime(
+                df["attendance_date"],
+                errors="coerce",
+            ).dt.date
 
-        csv_data = df.to_csv(index=False).encode("utf-8")
+        st.subheader("Filters")
 
-        st.download_button(
-            label="Download Attendance Logs as CSV",
-            data=csv_data,
-            file_name="attendance_logs.csv",
-            mime="text/csv",
-            use_container_width=True,
-        )
+        filter_col1, filter_col2, filter_col3 = st.columns(3)
+
+        with filter_col1:
+            search_query = st.text_input(
+                "Search by Student ID or Name",
+                placeholder="Example: S001 or Mohamad",
+            )
+
+        with filter_col2:
+            available_dates = sorted(df["attendance_date"].dropna().unique())
+
+            if available_dates:
+                default_start_date = available_dates[0]
+                default_end_date = available_dates[-1]
+
+                date_range = st.date_input(
+                    "Filter by Date Range",
+                    value=(default_start_date, default_end_date),
+                    key="attendance_date_range",
+                )
+            else:
+                date_range = None
+
+        with filter_col3:
+            status_options = sorted(df["status"].dropna().unique().tolist())
+
+            selected_status = st.multiselect(
+                "Filter by Status",
+                options=status_options,
+                default=status_options,
+            )
+
+        filtered_df = df.copy()
+
+        if search_query:
+            search_query = search_query.lower().strip()
+
+            filtered_df = filtered_df[
+                filtered_df["student_id"].astype(str).str.lower().str.contains(search_query)
+                | filtered_df["full_name"].astype(str).str.lower().str.contains(search_query)
+            ]
+
+        if date_range and len(date_range) == 2:
+            start_date, end_date = date_range
+
+            filtered_df = filtered_df[
+                (filtered_df["attendance_date"] >= start_date)
+                & (filtered_df["attendance_date"] <= end_date)
+            ]
+
+        if selected_status:
+            filtered_df = filtered_df[
+                filtered_df["status"].isin(selected_status)
+            ]
+
+        st.subheader("Summary")
+
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        with metric_col1:
+            st.metric("Total Records", len(filtered_df))
+
+        with metric_col2:
+            st.metric("Unique Students", filtered_df["student_id"].nunique())
+
+        with metric_col3:
+            st.metric("Attendance Days", filtered_df["attendance_date"].nunique())
+
+        st.subheader("Filtered Attendance Records")
+
+        if filtered_df.empty:
+            st.warning("No records match the selected filters.")
+
+        else:
+            st.dataframe(
+                filtered_df,
+                use_container_width=True,
+                height=420,
+            )
+
+            csv_data = filtered_df.to_csv(index=False).encode("utf-8")
+
+            st.download_button(
+                label="Download Filtered Attendance Logs as CSV",
+                data=csv_data,
+                file_name="filtered_attendance_logs.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
+
+
+elif menu == "Security Logs":
+    st.header("Security Logs")
+
+    security_logs = get_security_logs()
+
+    if not security_logs:
+        st.info("No security logs found yet.")
+
+    else:
+        df = pd.DataFrame(security_logs)
+
+        if "created_at" in df.columns:
+            df["created_at"] = pd.to_datetime(
+                df["created_at"],
+                errors="coerce",
+            )
+
+            df["created_date"] = df["created_at"].dt.date
+
+        st.subheader("Filters")
+
+        filter_col1, filter_col2, filter_col3 = st.columns(3)
+
+        with filter_col1:
+            event_options = sorted(df["event_type"].dropna().unique().tolist())
+
+            selected_events = st.multiselect(
+                "Filter by Event Type",
+                options=event_options,
+                default=event_options,
+            )
+
+        with filter_col2:
+            search_query = st.text_input(
+                "Search Student, Name, or Message",
+                placeholder="Example: S001, Mohamad, failed",
+            )
+
+        with filter_col3:
+            if "created_date" in df.columns:
+                available_dates = sorted(df["created_date"].dropna().unique())
+
+                if available_dates:
+                    date_range = st.date_input(
+                        "Filter by Date Range",
+                        value=(available_dates[0], available_dates[-1]),
+                        key="security_date_range",
+                    )
+                else:
+                    date_range = None
+            else:
+                date_range = None
+
+        filtered_df = df.copy()
+
+        if selected_events:
+            filtered_df = filtered_df[
+                filtered_df["event_type"].isin(selected_events)
+            ]
+
+        if search_query:
+            search_query = search_query.lower().strip()
+
+            filtered_df = filtered_df[
+                filtered_df["student_id"].astype(str).str.lower().str.contains(search_query)
+                | filtered_df["full_name"].astype(str).str.lower().str.contains(search_query)
+                | filtered_df["message"].astype(str).str.lower().str.contains(search_query)
+            ]
+
+        if date_range and len(date_range) == 2 and "created_date" in filtered_df.columns:
+            start_date, end_date = date_range
+
+            filtered_df = filtered_df[
+                (filtered_df["created_date"] >= start_date)
+                & (filtered_df["created_date"] <= end_date)
+            ]
+
+        st.subheader("Summary")
+
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        with metric_col1:
+            st.metric("Total Security Events", len(filtered_df))
+
+        with metric_col2:
+            st.metric("Event Types", filtered_df["event_type"].nunique())
+
+        with metric_col3:
+            flagged_count = len(
+                filtered_df[
+                    filtered_df["event_type"].astype(str).str.contains(
+                        "FAILED|ERROR|NO_FACE|MULTIPLE|DUPLICATE",
+                        case=False,
+                        regex=True,
+                    )
+                ]
+            )
+
+            st.metric("Flagged Events", flagged_count)
+
+        st.subheader("Security Event Records")
+
+        if filtered_df.empty:
+            st.warning("No security logs match the selected filters.")
+
+        else:
+            st.dataframe(
+                filtered_df,
+                use_container_width=True,
+                height=420,
+            )
+
+            csv_data = filtered_df.to_csv(index=False).encode("utf-8")
+
+            st.download_button(
+                label="Download Security Logs as CSV",
+                data=csv_data,
+                file_name="security_logs.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
 
 
 elif menu == "Database Status":
     st.header("Database Status")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         st.metric("Registered Users", get_users_count())
@@ -263,9 +525,12 @@ elif menu == "Database Status":
     with col3:
         st.metric("Attendance Logs", get_attendance_logs_count())
 
+    with col4:
+        st.metric("Security Logs", get_security_logs_count())
+
     st.divider()
 
     st.info(
-        "This page only shows system statistics. "
-        "Local database files and biometric data should not be uploaded to GitHub."
+        "This page shows local system statistics. "
+        "Do not upload local database files, face images, or biometric data to GitHub."
     )
