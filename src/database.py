@@ -21,6 +21,32 @@ def get_connection():
     return conn
 
 
+def get_user_by_student_id(student_id: str):
+    """
+    Returns a user if the student ID already exists.
+    Used to prevent duplicate student enrollment.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT user_id, student_id, full_name, email, role, created_at
+        FROM users
+        WHERE student_id = ?
+        """,
+        (student_id.strip(),),
+    )
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if row is None:
+        return None
+
+    return dict(row)
+
+
 def encoding_to_blob(encoding: np.ndarray) -> bytes:
     buffer = io.BytesIO()
     np.save(buffer, encoding)

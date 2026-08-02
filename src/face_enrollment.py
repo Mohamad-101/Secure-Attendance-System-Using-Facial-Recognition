@@ -2,7 +2,12 @@ import numpy as np
 from PIL import Image
 import face_recognition
 
-from src.database import create_or_update_user, save_face_profile
+from src.database import (
+    create_or_update_user,
+    save_face_profile,
+    get_all_face_profiles,
+    get_user_by_student_id,
+)
 
 
 def image_file_to_rgb_array(image_file) -> np.ndarray:
@@ -69,28 +74,78 @@ def get_single_face_encoding(image_file) -> np.ndarray:
     return encodings[0]
 
 
-def enroll_user(
-    student_id: str,
-    full_name: str,
-    email: str | None,
-    role: str,
-    image_file,
-):
+DUPLICATE_FACE_TOLERANCE = 0.50
+
+
+def check_duplicate_face(new_encoding, tolerance=DUPLICATE_FACE_TOLERANCE):
     """
-    Register or update a user and save their face encoding.
+    Compares a new face encoding with all stored face encodings.
+    Returns the matched profile if the face is already enrolled.
     """
 
-    if not student_id or not student_id.strip():
+    profiles = get_all_face_profiles()
+
+    if not profiles:
+        return None
+
+    known_encodings = []
+
+    for profile in profiles:
+        if "face_encoding" in profile:
+            known_encodings.append(profile["face_encoding"])
+        elif "encoding" in profile:
+            known_encodings.append(profile["encoding"])
+        else:
+            raise ValueError(
+                f"Face encoding not found in stored profile. Available keys: {list(profile.keys())}"
+            )
+
+    distances = face_recognition.face_distance(known_encodings, new_encoding)
+
+    best_index = int(np.argmin(distances))
+    best_distance = float(distances[best_index])
+
+    if best_distance <= tolerance:
+        duplicate_profile = dict(profiles[best_index])
+        duplicate_profile["face_distance"] = best_distance
+        return duplicate_profile
+
+    return None
+
+
+def enroll_user(student_id, full_name, email, role, image_file):
+    student_id = student_id.strip()
+    full_name = full_name.strip()
+    email = email.strip() if email else None
+    role = role.strip() if role else "student"
+
+    if not student_id:
         raise ValueError("Student ID is required.")
-    
 
-    if not full_name or not full_name.strip():
+    if not full_name:
         raise ValueError("Full name is required.")
 
     if image_file is None:
-        raise ValueError("Face image is required.")
+        raise ValueError("A face image is required for enrollment.")
 
-    encoding = get_single_face_encoding(image_file)
+    existing_user = get_user_by_student_id(student_id)
+
+    if existing_user:
+        raise ValueError(
+            f"Student ID {student_id} is already enrolled for "
+            f"{existing_user['full_name']}."
+        )
+
+    face_encoding = get_single_face_encoding(image_file)
+
+    duplicate_face = check_duplicate_face(face_encoding)
+
+    if duplicate_face:
+        raise ValueError(
+            f"This face is already enrolled as {duplicate_face['full_name']} "
+            f"with Student ID {duplicate_face['student_id']}. "
+            f"Face distance: {duplicate_face['face_distance']:.4f}"
+        )
 
     user_id = create_or_update_user(
         student_id=student_id,
@@ -99,15 +154,13 @@ def enroll_user(
         role=role,
     )
 
-    save_face_profile(
-        user_id=user_id,
-        encoding=encoding,
-    )
+    save_face_profile(user_id, face_encoding)
 
     return {
         "user_id": user_id,
-        "student_id": student_id.strip(),
-        "full_name": full_name.strip(),
-        "email": email.strip() if email else None,
-        "role": role.strip() if role else "student",
+        "student_id": student_id,
+        "full_name": full_name,
+        "email": email,
+        "role": role,
+        "message": "User enrolled successfully.",
     }
