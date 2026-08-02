@@ -1,0 +1,17 @@
+name: attendance
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - dlib
+  - pip
+  - pip:
+      - streamlit
+      - numpy==1.26.4
+      - pandas
+      - Pillow
+      - opencv-python-headless
+      - face-recognition
+      - face-recognition-models
+      - matplotlib
+      - jupyter

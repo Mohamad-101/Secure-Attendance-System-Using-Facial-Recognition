@@ -10,11 +10,11 @@
 
 ## Current Project Status
 
-This repository currently represents the progress of the **Secure Attendance System with Face Authentication** project up to **Phase 2**.
+This repository contains the Secure Attendance System with Face Authentication developed during the CCRI research internship.
 
-Phase 1 focused on literature review, system design, database planning, and prototype testing. Phase 2 extended the project into a working local MVP that supports face enrollment, face verification, attendance recording, duplicate check-in prevention, and attendance log viewing through a Streamlit dashboard.
+The project has completed the Phase 2 MVP and is currently moving through Phase 3, which focuses on reporting, security logging, access control, internal testing, and evaluation.
 
-The current implementation is developed on the `phase-2-local-streamlit` branch and includes the first functional version of the attendance workflow.
+Implemented modules include face enrollment, face verification, attendance recording, duplicate attendance prevention, attendance reporting, CSV export, security event logging, and a Streamlit dashboard.
 
 ---
 
@@ -163,7 +163,11 @@ Allows the user to capture or upload a new face image. The system automatically 
 
 Displays attendance records in a table and allows exporting the logs as a CSV file.
 
-### 4. Database Status
+## 4. Security Logs
+
+Shows event logging for failed verification, duplicate attendance, no-face cases, multiple-face cases, and system errors.
+
+### 5. Database Status
 
 Displays basic system statistics, including the number of registered users, stored facial profiles, and attendance logs.
 
