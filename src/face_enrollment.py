@@ -82,6 +82,7 @@ def enroll_user(
 
     if not student_id or not student_id.strip():
         raise ValueError("Student ID is required.")
+    
 
     if not full_name or not full_name.strip():
         raise ValueError("Full name is required.")
