@@ -43,24 +43,56 @@ The current Phase 2 MVP supports:
 Secure-Attendance-System-Using-Facial-Recognition/
 │
 ├── app.py
+├── README.md
 ├── requirements.txt
+├── environment.yml
 ├── .gitignore
+├── .env.example
+├── .gitattributes
 │
 ├── src/
 │   ├── __init__.py
 │   ├── database.py
 │   ├── face_enrollment.py
 │   ├── face_verification.py
-│   └── attendance.py
+│   ├── attendance.py
+│   └── security_utils.py
 │
 ├── docs/
-│   └── PHASE_1_DOCUMENTATION.md
+│   ├── phase_1/
+│   │   └── PHASE_1_DOCUMENTATION.md
+│   │
+│   ├── phase_2_mvp/
+│   │   └── phase_2_summary.md
+│   │
+│   ├── phase_3_security_reporting/
+│   │   ├── security_logging.md
+│   │   ├── access_control_plan.md
+│   │   └── testing_matrix.md
+│   │
+│   ├── weekly_reports/
+│   ├── technical_articles/
+│   └── presentations/
 │
-├── research_sandbox/
+├── notebooks/
 │   └── Phase1_Vision_and_DB_Tests.ipynb
 │
+├── scripts/
+│   ├── reset_database.py
+│   └── export_logs.py
+│
+├── tests/
+│   ├── test_database.py
+│   ├── test_attendance.py
+│   ├── test_security_logs.py
+│   └── test_enrollment_validation.py
+│
+├── assets/
+│   ├── diagrams/
+│   └── screenshots_privacy_safe/
+│
 └── data/
-    └── Local database files ignored by Git
+    └── .gitkeep
 ```
 
 ### Main Files
