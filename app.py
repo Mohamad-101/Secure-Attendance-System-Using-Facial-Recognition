@@ -16,6 +16,7 @@ from src.database import (
 from src.face_enrollment import enroll_user
 from src.face_verification import verify_face
 from src.attendance import mark_attendance
+from src.access_control import require_admin_access
 
 
 st.set_page_config(
@@ -389,7 +390,9 @@ elif menu == "View Attendance Logs":
 
 
 elif menu == "Security Logs":
-    st.header("Security Logs")
+    require_admin_access("Security Logs")
+    
+    st.subheader("Security Logs")
 
     security_logs = get_security_logs()
 
@@ -512,7 +515,8 @@ elif menu == "Security Logs":
 
 
 elif menu == "Database Status":
-    st.header("Database Status")
+    require_admin_access("Database Status")
+    st.subheader("Database Status")
 
     col1, col2, col3, col4 = st.columns(4)
 

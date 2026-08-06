@@ -1,43 +1,101 @@
 # Secure Attendance System with Face Authentication
 
-**Developer:** Mohamad El Saleh
-
-**Host Institution:** International Center for AI and Cyber Security Research and Innovations (CCRI)
-
-**Academic Affiliation:** Lebanese University Faculty of Engineering (ULFG)
-
----
-
-## Current Project Status
-
-This repository contains the Secure Attendance System with Face Authentication developed during the CCRI research internship.
-
-The project has completed the Phase 2 MVP and is currently moving through Phase 3, which focuses on reporting, security logging, access control, internal testing, and evaluation.
-
-Implemented modules include face enrollment, face verification, attendance recording, duplicate attendance prevention, attendance reporting, CSV export, security event logging, and a Streamlit dashboard.
+**Developer:** Mohamad El Saleh  
+**Host Institution:** International Center for AI and Cyber Security Research and Innovations (CCRI)  
+**Academic Affiliation:** Lebanese University Faculty of Engineering (ULFG)  
+**Project Type:** CCRI Summer Research Internship Project  
+**Field:** Artificial Intelligence, Computer Vision, Biometric Authentication, Cybersecurity, Software Engineering  
 
 ---
 
 ## Project Overview
 
-Traditional attendance tracking methods are vulnerable to proxy attendance, credential sharing, manual errors, and administrative delays. This project aims to develop a secure attendance system that uses face authentication to verify a user's identity before recording attendance.
+The **Secure Attendance System with Face Authentication** is a research-internship project that aims to improve attendance management using AI-based face authentication.
 
-The system detects a face from a captured or uploaded image, generates a 128-dimensional facial encoding, compares it with stored user profiles, and records attendance after successful verification.
+Traditional attendance methods such as manual sheets, RFID cards, passwords, or shared credentials can be affected by proxy attendance, identity misuse, manual errors, and administrative delays. This project addresses these issues by verifying a user's identity using facial recognition before recording attendance.
 
-The current Phase 2 MVP supports:
-
-* User registration
-* Face enrollment
-* Facial encoding storage
-* Face verification
-* Automatic attendance recording
-* Duplicate check-in prevention
-* Attendance log viewing
-* CSV export of attendance records
+The system allows a user to register with a face image, stores a numerical facial encoding in a local SQLite database, verifies future attendance attempts by comparing face encodings, records attendance after successful verification, and monitors failed or suspicious attempts through security logs.
 
 ---
 
-## Repository Architecture and Navigation
+## Current Project Status
+
+The project has completed the main **Phase 2 MVP** and is currently finalizing **Phase 3**, which focuses on reporting, security mechanisms, access control, internal testing, debugging, and documentation.
+
+Implemented features include:
+
+- Student registration and face enrollment
+- Face detection and facial encoding generation
+- Face verification using stored encodings
+- Attendance recording after successful verification
+- Duplicate attendance prevention
+- Attendance logs dashboard
+- Attendance filtering and CSV export
+- Security event logging
+- Security Logs dashboard
+- Admin access control for sensitive pages
+- Duplicate student ID prevention
+- Duplicate face enrollment prevention
+- Phase 3 testing documentation
+
+---
+
+## Research Internship Alignment
+
+This project follows the CCRI internship timeline and expected outcomes.
+
+### Completed Internship Phases
+
+| Phase | Timeline | Status | Main Work |
+|---|---:|---|---|
+| Phase 1 | June 6 – June 20 | Completed | Literature review, system requirements, architecture, environment setup, database design, prototype testing |
+| Phase 2 | June 21 – July 10 | Completed | Face enrollment, recognition, attendance recording, verification workflow, Streamlit dashboard |
+| Phase 3 | July 11 – July 31 | Finalizing | Reporting, analytics, security logging, access control, internal testing, debugging |
+
+### Upcoming Internship Phases
+
+| Phase | Timeline | Planned Work |
+|---|---:|---|
+| Phase 4 | August 1 – August 15 | Performance optimization, lighting and pose evaluation, UI enhancement, documentation preparation |
+| Phase 5 | August 16 – August 31 | Final deployment, demonstration, source code submission, project report, presentation, final evaluation |
+
+---
+
+## Main Objectives
+
+The main objectives of the project are:
+
+- Develop an AI-powered attendance management system.
+- Provide secure user registration and facial profile enrollment.
+- Verify attendance using face authentication.
+- Reduce proxy attendance and identity misuse.
+- Record attendance automatically after successful verification.
+- Provide a dashboard for attendance monitoring and management.
+- Generate attendance reports and analytics.
+- Add security mechanisms such as access control and suspicious event logging.
+- Document and test the system professionally for research-internship evaluation.
+
+---
+
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Programming Language | Python |
+| User Interface | Streamlit |
+| Face Recognition | `face_recognition` library / dlib pretrained model |
+| Face Representation | 128-dimensional facial encodings |
+| Image Processing | Pillow, OpenCV headless |
+| Data Processing | NumPy, Pandas |
+| Database | SQLite |
+| Environment Management | Conda |
+| Documentation | Markdown, weekly reports, technical articles, presentation slides |
+
+> Note: The current implementation uses a pretrained face-recognition model through the `face_recognition` and dlib ecosystem. It does not train a custom deep learning model from scratch.
+
+---
+
+## Repository Structure
 
 ```text
 Secure-Attendance-System-Using-Facial-Recognition/
@@ -45,10 +103,7 @@ Secure-Attendance-System-Using-Facial-Recognition/
 ├── app.py
 ├── README.md
 ├── requirements.txt
-├── environment.yml
 ├── .gitignore
-├── .env.example
-├── .gitattributes
 │
 ├── src/
 │   ├── __init__.py
@@ -56,102 +111,88 @@ Secure-Attendance-System-Using-Facial-Recognition/
 │   ├── face_enrollment.py
 │   ├── face_verification.py
 │   ├── attendance.py
-│   └── security_utils.py
+│   └── access_control.py
 │
 ├── docs/
-│   ├── phase_1/
-│   │   └── PHASE_1_DOCUMENTATION.md
-│   │
-│   ├── phase_2_mvp/
-│   │   └── phase_2_summary.md
-│   │
-│   ├── phase_3_security_reporting/
-│   │   ├── security_logging.md
-│   │   ├── access_control_plan.md
-│   │   └── testing_matrix.md
-│   │
-│   ├── weekly_reports/
-│   ├── technical_articles/
-│   └── presentations/
+│   ├── PHASE_1_DOCUMENTATION.md
+│   └── phase_3_security_reporting/
+│       ├── phase_3_summary.md
+│       └── testing_matrix.md
 │
-├── notebooks/
+├── research_sandbox/
 │   └── Phase1_Vision_and_DB_Tests.ipynb
 │
-├── scripts/
-│   ├── reset_database.py
-│   └── export_logs.py
-│
-├── tests/
-│   ├── test_database.py
-│   ├── test_attendance.py
-│   ├── test_security_logs.py
-│   └── test_enrollment_validation.py
-│
-├── assets/
-│   ├── diagrams/
-│   └── screenshots_privacy_safe/
-│
 └── data/
-    └── .gitkeep
+    └── attendance.db
 ```
 
-### Main Files
-
-| File                                                | Description                                                               |
-| --------------------------------------------------- | ------------------------------------------------------------------------- |
-| `app.py`                                            | Main Streamlit dashboard interface                                        |
-| `src/database.py`                                   | SQLite database creation and query handling                               |
-| `src/face_enrollment.py`                            | User registration, image conversion, face detection, and encoding storage |
-| `src/face_verification.py`                          | Face comparison and identity verification                                 |
-| `src/attendance.py`                                 | Attendance recording and duplicate check-in handling                      |
-| `docs/PHASE_1_DOCUMENTATION.md`                     | Phase 1 research and system design documentation                          |
-| `research_sandbox/Phase1_Vision_and_DB_Tests.ipynb` | Prototype notebook for early face encoding and database testing           |
+> The `data/` folder is used locally only. Database files and biometric data should not be uploaded to GitHub.
 
 ---
 
-## Core Technology Stack
+## Main Files
 
-| Component              | Technology                       |
-| ---------------------- | -------------------------------- |
-| Programming Language   | Python                           |
-| Web Interface          | Streamlit                        |
-| Face Recognition       | dlib / `face_recognition`        |
-| Face Representation    | 128-dimensional facial encodings |
-| Image Handling         | Pillow, OpenCV headless          |
-| Numerical Processing   | NumPy                            |
-| Data Handling          | Pandas                           |
-| Database               | SQLite                           |
-| Environment Management | Conda                            |
+| File | Description |
+|---|---|
+| `app.py` | Main Streamlit dashboard application |
+| `src/database.py` | SQLite database setup, query functions, attendance logs, and security logs |
+| `src/face_enrollment.py` | User registration, image conversion, face detection, encoding generation, and duplicate enrollment prevention |
+| `src/face_verification.py` | Face matching and identity verification |
+| `src/attendance.py` | Attendance recording and duplicate check-in prevention |
+| `src/access_control.py` | Admin access control for sensitive dashboard pages |
+| `docs/PHASE_1_DOCUMENTATION.md` | Phase 1 research and design documentation |
+| `docs/phase_3_security_reporting/phase_3_summary.md` | Summary of Phase 3 reporting, security, and testing work |
+| `docs/phase_3_security_reporting/testing_matrix.md` | Internal testing checklist for Phase 3 |
+| `research_sandbox/Phase1_Vision_and_DB_Tests.ipynb` | Early notebook prototype for face encoding and database testing |
 
 ---
 
 ## Implemented Features
 
-### Phase 1: Research and Prototype Testing
+### Phase 1: Research, Architecture, and Prototype Testing
 
-* Literature review on facial recognition and biometric authentication.
-* Study of face detection, face recognition, and attendance management techniques.
-* Definition of system requirements and architecture.
-* SQLite database and attendance management framework design.
-* Prototype testing using Jupyter/Google Colab.
-* Initial testing of face encodings and distance-based comparison.
+- Reviewed facial recognition and biometric authentication concepts.
+- Studied face detection, face recognition, and attendance management techniques.
+- Defined the initial system requirements and architecture.
+- Designed the SQLite database and attendance management framework.
+- Tested face encoding and distance-based comparison in a prototype notebook.
+- Prepared the foundation for modular Python implementation.
 
 ### Phase 2: Enrollment, Verification, and Attendance MVP
 
-* Created a local development environment using Conda and Python 3.10.
-* Implemented SQLite database tables for users, facial profiles, attendance sessions, and attendance logs.
-* Developed the face enrollment module.
-* Added support for camera input and image upload using Streamlit.
-* Converted face images into valid RGB `uint8` NumPy arrays.
-* Generated and stored 128-dimensional facial encodings.
-* Developed the face verification module using distance-based matching.
-* Displayed face distance values after verification.
-* Connected successful verification to attendance recording.
-* Added duplicate check-in prevention for the same user on the same day.
-* Improved the verification workflow so attendance is processed automatically after image capture or upload.
-* Added an attendance logs page.
-* Added CSV export for attendance records.
-* Added a database status page showing system counts.
+- Created a local Conda development environment using Python 3.10.
+- Implemented SQLite tables for users, facial profiles, attendance sessions, and attendance logs.
+- Built the face enrollment module.
+- Added Streamlit camera input and image upload support.
+- Converted uploaded or captured images into RGB `uint8` NumPy arrays.
+- Generated and stored 128-dimensional facial encodings.
+- Implemented face verification using distance-based matching.
+- Displayed face distance values after verification.
+- Connected successful verification to attendance recording.
+- Added duplicate attendance prevention for the same user on the same day.
+- Added attendance logs viewing.
+- Added CSV export for attendance records.
+- Added database status monitoring.
+
+### Phase 3: Reporting, Security Logging, Access Control, and Internal Testing
+
+- Improved attendance reporting and analytics.
+- Added filtering by student ID, name, date range, and status.
+- Added filtered CSV export for attendance logs.
+- Added a `security_logs` database table.
+- Implemented security logging functions.
+- Logged failed face verification attempts.
+- Logged duplicate attendance attempts.
+- Logged no-face, multiple-face, no-enrolled-user, and verification error cases.
+- Added a dedicated Security Logs dashboard page.
+- Added security log filtering by event type, search text, and date range.
+- Added CSV export for security logs.
+- Added admin access control for sensitive pages.
+- Protected Security Logs and Database Status pages.
+- Logged wrong admin password attempts as `ACCESS_DENIED`.
+- Added duplicate student ID prevention during enrollment.
+- Added duplicate face enrollment prevention using face-distance comparison.
+- Created Phase 3 testing documentation.
 
 ---
 
@@ -164,7 +205,9 @@ Capture or Upload Face Image
     ↓
 Detect Face
     ↓
-Generate 128-D Face Encoding
+Generate 128-Dimensional Face Encoding
+    ↓
+Check for Duplicate Student ID or Duplicate Face
     ↓
 Store User and Face Encoding in SQLite
     ↓
@@ -174,49 +217,54 @@ Compare New Face Encoding with Stored Encodings
     ↓
 If Match is Successful
     ↓
-Record Attendance and Prevent Duplicate Check-in
+Record Attendance
     ↓
-Display Attendance Logs / Export CSV
+Prevent Duplicate Check-in on the Same Day
+    ↓
+Display Attendance Logs and Security Logs
 ```
 
 ---
 
-## Streamlit Dashboard Pages
+## Dashboard Pages
+
+The Streamlit dashboard includes the following pages:
 
 ### 1. Register User
 
-Allows the user to enter student information and enroll a face image. The system detects the face, generates a facial encoding, and stores it in the SQLite database.
+Used to register a student and enroll a face image. The system detects the face, generates a facial encoding, checks for duplicate student ID or duplicate face enrollment, and stores the profile in the database.
 
 ### 2. Verify Attendance
 
-Allows the user to capture or upload a new face image. The system automatically verifies the face and records attendance if the match is successful.
+Used to verify a captured or uploaded face image. If the face matches an enrolled profile within the selected tolerance, attendance is recorded automatically.
 
 ### 3. View Attendance Logs
 
-Displays attendance records in a table and allows exporting the logs as a CSV file.
+Used to view attendance records, search by student ID or name, filter by date range or status, view summary metrics, and export attendance records as a CSV file.
 
-## 4. Security Logs
+### 4. Security Logs
 
-Shows event logging for failed verification, duplicate attendance, no-face cases, multiple-face cases, and system errors.
+Used to monitor failed, duplicate, and suspicious verification events. This page is protected using admin access control.
 
 ### 5. Database Status
 
-Displays basic system statistics, including the number of registered users, stored facial profiles, and attendance logs.
+Used to view system statistics such as registered users, stored facial profiles, attendance logs, and security logs. This page is protected using admin access control.
 
 ---
 
 ## Database Design
 
-The system uses SQLite as the local database.
+The system uses SQLite as a local database.
 
-| Table                 | Purpose                                                          |
-| --------------------- | ---------------------------------------------------------------- |
-| `users`               | Stores student ID, full name, email, role, and creation time     |
-| `facial_profiles`     | Stores the face encoding linked to each user                     |
-| `attendance_sessions` | Stores daily attendance session information                      |
-| `attendance_logs`     | Stores attendance date, check-in time, status, and face distance |
+| Table | Purpose |
+|---|---|
+| `users` | Stores student ID, full name, email, role, and creation time |
+| `facial_profiles` | Stores the facial encoding linked to each user |
+| `attendance_sessions` | Stores attendance session information |
+| `attendance_logs` | Stores attendance date, check-in time, status, and face distance |
+| `security_logs` | Stores failed, duplicate, suspicious, and access-denied events |
 
-Local database files are not uploaded to GitHub because they may contain sensitive biometric information.
+Local database files are excluded from GitHub because they may contain sensitive biometric or identity-related information.
 
 ---
 
@@ -231,13 +279,105 @@ Else:
     Face is rejected
 ```
 
-The current default tolerance is:
+The default verification tolerance is:
 
 ```text
 0.60
 ```
 
-This value is suitable for the current MVP and will be further evaluated in later phases using multiple users, lighting conditions, and camera angles.
+A lower distance means the submitted face is more similar to a stored face encoding. The threshold will be evaluated further during the optimization and testing phases.
+
+---
+
+## Duplicate Enrollment Prevention
+
+The enrollment workflow includes validation to improve data integrity and reduce misuse.
+
+The system blocks:
+
+- Registering the same student ID more than once
+- Registering the same face using a different student ID
+
+The duplicate-face check compares the new face encoding with existing stored encodings before saving the new user profile.
+
+The duplicate enrollment tolerance is stricter than the attendance verification tolerance:
+
+```text
+Attendance verification tolerance: 0.60
+Duplicate face enrollment tolerance: 0.50
+```
+
+---
+
+## Security Logs
+
+The system includes a Security Logs module to record failed, duplicate, and suspicious events.
+
+The security logging system can record:
+
+- Failed face verification attempts
+- Duplicate attendance attempts
+- No face detected in the submitted image
+- Multiple faces detected in one image
+- No enrolled users available for verification
+- General verification or enrollment errors
+- Wrong admin password attempts
+
+Each security log can include:
+
+- Event type
+- Message
+- Student ID, when available
+- Full name, when available
+- Face distance, when available
+- Timestamp
+
+The Security Logs dashboard allows the admin to:
+
+- View all security events
+- Filter by event type
+- Search by student ID, name, or message
+- Filter by date range
+- View summary metrics
+- Export filtered security logs as a CSV file
+
+---
+
+## Access Control
+
+Basic admin access control was added to protect sensitive dashboard pages.
+
+Protected pages include:
+
+- Security Logs
+- Database Status
+
+If a user tries to access a protected page without the correct admin password, access is blocked. Wrong password attempts are recorded as `ACCESS_DENIED` events in the Security Logs.
+
+For development and demonstration, the system uses a simple admin password mechanism. In a production system, this should be replaced with stronger authentication, session management, and role-based access control.
+
+---
+
+## Privacy and Data Handling
+
+Facial data is sensitive biometric information. The project follows basic privacy precautions during development:
+
+- Local database files are ignored by Git.
+- Test face images are not uploaded to the repository.
+- Biometric files and local data folders are excluded using `.gitignore`.
+- Screenshots used in reports or presentations should hide faces and private information.
+- Facial encodings are treated as sensitive biometric data.
+- Consent should be obtained before collecting or using face images for testing.
+- Demo data should use non-sensitive or synthetic student information when possible.
+
+Recommended future privacy improvements include:
+
+- Database encryption
+- Stronger admin authentication
+- Role-based access control
+- Biometric template protection
+- Data deletion and retention rules
+- Consent and user-management documentation
 
 ---
 
@@ -250,103 +390,162 @@ git clone https://github.com/Mohamad-101/Secure-Attendance-System-Using-Facial-R
 cd Secure-Attendance-System-Using-Facial-Recognition
 ```
 
-### 2. Create and activate Conda environment
+### 2. Create and activate the Conda environment
 
 ```bash
 conda create -n attendance python=3.10 -y
 conda activate attendance
 ```
 
-### 3. Install dependencies
+### 3. Install dlib using Conda
 
 ```bash
 conda install -c conda-forge dlib -y
+```
+
+### 4. Install Python dependencies
+
+```bash
 python -m pip install -r requirements.txt
 ```
 
-### 4. Run the Streamlit app
+### 5. Optional: set an admin password
 
-```bash
-streamlit run app.py
+For PowerShell:
+
+```powershell
+$env:ADMIN_PASSWORD="your_secure_password"
 ```
 
----
+If no environment variable is set, the project may use a demo password during local testing.
 
-## Project Development Roadmap
+### 6. Run the Streamlit app
 
-### Phase 1: Research, Architecture, and Prototype Testing
+```bash
+python -m streamlit run app.py
+```
 
-* [x] Review facial recognition and biometric authentication concepts.
-* [x] Study face detection, face recognition, and attendance management techniques.
-* [x] Define system requirements and architecture.
-* [x] Set up the development environment.
-* [x] Design the SQLite database and attendance framework.
-* [x] Test face encoding and distance comparison in prototype notebook.
-* [x] Insert demo database records for early testing.
-
-### Phase 2: Enrollment, Verification, and Dashboard
-
-* [x] Build user enrollment and facial profile registration module.
-* [x] Move notebook logic into reusable Python modules.
-* [x] Implement SQLite database layer.
-* [x] Implement face verification using stored encodings.
-* [x] Implement attendance recording after successful verification.
-* [x] Add duplicate check-in prevention.
-* [x] Build Streamlit dashboard interface.
-* [x] Add attendance logs page.
-* [x] Add CSV export.
-
-### Phase 3: Security, Reporting, and Evaluation
-
-* [ ] Add basic anti-spoofing or image quality checks.
-* [ ] Add failed verification logging.
-* [ ] Test the system with multiple users.
-* [ ] Evaluate recognition under different lighting and pose conditions.
-* [ ] Improve dashboard user experience.
-* [ ] Add access control and security mechanisms.
-* [ ] Improve documentation and reporting.
+Using `python -m streamlit` is recommended because it runs Streamlit from the active Python environment.
 
 ---
 
-## Privacy and Data Handling
+## Requirements
 
-Facial data is sensitive biometric information. The project follows basic privacy precautions during development:
+The project dependencies include:
 
-* Local database files are ignored by Git.
-* Test face images are not uploaded to the repository.
-* Biometric files and local data folders are excluded using `.gitignore`.
-* Screenshots used in reports or presentations should be blurred or cropped to hide faces.
-* Facial encodings should be treated as sensitive data.
+```text
+streamlit
+numpy
+pandas
+Pillow
+opencv-python-headless
+face-recognition
+face-recognition-models
+dlib
+```
 
-Recommended future improvements include database encryption, admin authentication, access control, and stronger privacy protection for biometric data.
+Because `dlib` installation can be difficult on Windows using only `pip`, Conda is recommended.
+
+---
+
+## Internal Testing
+
+Internal testing was performed for the major Phase 3 workflows.
+
+Tested cases include:
+
+- New student enrollment
+- Duplicate student ID prevention
+- Duplicate face enrollment prevention
+- Successful attendance verification
+- Unknown face rejection
+- Duplicate attendance prevention
+- Failed verification logging
+- Duplicate attempt logging
+- Security Logs access control
+- Database Status access control
+- Wrong admin password logging
+- Attendance filtering
+- Security log filtering
+- CSV exports
+
+A detailed testing matrix is available in:
+
+```text
+docs/phase_3_security_reporting/testing_matrix.md
+```
 
 ---
 
 ## Current Limitations
 
-* The current version uses captured/uploaded images rather than continuous live video.
-* Anti-spoofing and liveness detection are not fully implemented yet.
-* Testing has been limited to a small number of users.
-* SQLite is suitable for local development, but a cloud database may be needed for deployment.
-* Dashboard access is not yet protected by authentication.
-* Face recognition threshold still needs more evaluation.
+The current version is a local research prototype and still has the following limitations:
+
+- The system uses captured or uploaded images rather than continuous live video.
+- Full anti-spoofing and liveness detection are not implemented yet.
+- Image quality validation is planned but not fully completed.
+- Testing has been limited to a small number of users.
+- SQLite is suitable for local development but may need to be replaced for production deployment.
+- The current admin password mechanism is suitable for demonstration only.
+- Recognition tolerance still needs evaluation under different lighting, pose, and environmental conditions.
+- The system uses a pretrained face-recognition model rather than a custom-trained model.
 
 ---
 
 ## Next Steps
 
-The next phase will focus on improving security and reliability:
+The next project phase will focus on performance, evaluation, and final preparation.
 
-* Add basic anti-spoofing or image quality validation.
-* Add failed or suspicious attempt logging.
-* Test with multiple users and different image conditions.
-* Improve recognition threshold evaluation.
-* Improve Streamlit interface design.
-* Add access control for dashboard pages.
-* Prepare more complete technical documentation and project report.
+Planned work includes:
+
+- Performance optimization and model refinement
+- Evaluation under different lighting conditions
+- Evaluation under different face poses
+- Testing under different environmental conditions
+- Image quality validation
+- Dashboard usability improvements
+- Privacy-safe screenshots and final documentation
+- Final project report preparation
+- Final presentation and demonstration preparation
+- Future anti-spoofing or liveness detection
 
 ---
 
-## Notes
+## Deliverables
 
-This repository is part of the CCRI International Summer Internship project. The current branch contains the Phase 2 MVP implementation. Future phases will focus on security improvements, testing, reporting, optimization, and final deployment.
+The project contributes to the following internship deliverables:
+
+- Secure Attendance System with Face Authentication
+- Attendance Management Dashboard
+- Source Code Repository
+- Technical Documentation
+- Attendance Reports and Analytics Module
+- Internal Testing Matrix
+- Weekly Progress Reports
+- Technical Articles
+- Presentation Slides
+- Final Project Report
+
+---
+
+## Ethical and Academic Notes
+
+This repository is part of the CCRI Summer Research Internship project.
+
+When working with biometric data, the project should follow ethical AI and privacy-aware practices:
+
+- Do not upload real face images to GitHub.
+- Do not upload local database files.
+- Use consent-based image collection for testing.
+- Hide faces and private information in screenshots.
+- Use the system for educational and research purposes only unless stronger privacy, security, and deployment controls are added.
+
+---
+
+## Author
+
+**Mohamad El Saleh**  
+Computer and Communication Engineering Student  
+Lebanese University Faculty of Engineering  
+CCRI Summer Research Internship  
+Project: Secure Attendance System with Face Authentication
