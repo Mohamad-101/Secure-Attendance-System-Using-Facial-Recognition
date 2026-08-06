@@ -50,7 +50,6 @@ def get_single_face_encoding(image_file) -> np.ndarray:
     """
     image_array = image_file_to_rgb_array(image_file)
 
-    print("DEBUG image:", image_array.shape, image_array.dtype)
 
     face_locations = face_recognition.face_locations(
         image_array,
