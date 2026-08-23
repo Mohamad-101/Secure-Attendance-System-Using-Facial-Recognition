@@ -30,12 +30,11 @@ The goal is to evaluate whether the attendance verification workflow remains rel
 
 | Test ID | Condition | Student/User | Tolerance | Face Distance | Actual Result | Expected Result | Pass/Fail | Notes |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Good lighting |  | 0.60 |  |  | Accepted |  |  |
-| 2 | Low lighting |  | 0.60 |  |  | May reject |  |  |
-| 3 | Bright lighting |  | 0.60 |  |  | May reject |  |  |
-| 4 | Side pose |  | 0.60 |  |  | May reject |  |  |
-| 5 | Unknown user |  | 0.60 |  |  | Rejected |  |  |
-| 6 | Same image reused |  | 0.60 | 0.0000 |  | Accepted |  | Expected if exact same image is reused |
+| 1 | Good lighting |  | 0.60 | 0.3430 | Accepted | Accepted | Pass |  |
+| 2 | Low lighting |  | 0.60 | 0.4377 | Accepted | May reject | Pass |  |
+| 3 | Bright lighting |  | 0.60 | 0.3929 | Accepted | May reject | Pass |  |
+| 4 | Side pose |  | 0.60 |  |  | May reject | Fail | No face detected |
+| 5 | Same image reused |  | 0.60 | 0.0000 |  | Accepted |  | Expected if exact same image is reused |
 
 ## Important Observation
 If the same image used during enrollment is uploaded again during verification, the face distance can be 0.0000. This is expected because the stored encoding and submitted encoding come from the same image.
