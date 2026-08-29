@@ -10,7 +10,7 @@ Final Phase: Deployment, Demonstration, Documentation, and Assessment
 
 ## Week
 
-Week 11
+Week 11 & 12
 
 ## Purpose
 
