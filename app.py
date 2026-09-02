@@ -487,9 +487,19 @@ elif menu == "Register User":
                 default_event_type="ENROLLMENT_ERROR",
             )
 
+            attempted_student_id = student_id.strip() if student_id else None
+            attempted_full_name = full_name.strip() if full_name else None
+
             log_security_event(
                 event_type=event_type,
-                message=error_message,
+                message=(
+                    f"{error_message} "
+                    f"Attempted registration details: "
+                    f"Student ID={attempted_student_id or 'Not provided'}, "
+                    f"Full Name={attempted_full_name or 'Not provided'}."
+                ),
+                student_id=attempted_student_id,
+                full_name=attempted_full_name,
             )
 
 
