@@ -1,49 +1,94 @@
 # Phase 4 Evaluation Results Summary
 
 ## Project
+
 Secure Attendance System with Face Authentication
 
-## Week
-Week 10
+## Phase
+
+Phase 4: Evaluation, Optimization, and Model Refinement
 
 ## Objective
-This document summarizes the evaluation work completed after the initial Phase 4 testing setup.
 
-Week 9 focused on creating the threshold evaluation script and the lighting/pose testing matrix. Week 10 focuses on organizing the results, interpreting the meaning of face distances, and documenting the system’s current behavior under realistic testing conditions.
+This document summarizes the main evaluation results of the Secure Attendance System during Phase 4.
 
-## Evaluation Method
-The system was evaluated using a local threshold evaluation script. The script compares one local face image with the enrolled face profiles stored in the local SQLite database.
+Detailed threshold testing is documented in `threshold_testing_plan.md`, while detailed lighting and pose testing is documented in `lighting_pose_testing_matrix.md`. This file only presents the final summarized results and main observations.
 
-The tested tolerance values were:
+---
 
-| Tolerance | Description |
-|---|---|
-| 0.45 | Very strict |
-| 0.50 | Strict |
-| 0.55 | Balanced |
-| 0.60 | Default system setting |
-| 0.65 | More flexible |
+## 1. Evaluation Summary
 
-## Recorded Result
+The system was evaluated using local test images and the threshold evaluation script:
 
-| Test Case | Condition | Face Distance | Result |
-|---|---|---|---|
-| T01 | Clear image of enrolled user | 0.3563 | Accepted at all tested thresholds |
+```text
+scripts/evaluate_thresholds.py
+```
 
-## Interpretation
-The face distance of 0.3563 is below all tested tolerance values, including the strictest value of 0.45. This means the submitted image produced a strong match with the enrolled user profile.
+The evaluation focused on:
 
-This confirms that the system performs well when the input image is clear and the face is visible.
+- Face distance values
+- Acceptance or rejection at different tolerance levels
+- Behavior under different lighting conditions
+- Behavior under side-pose conditions
 
-## Important Observation
-If the exact same image used during enrollment is reused during verification, the face distance can be 0.0000. This is expected because the stored encoding and submitted encoding are generated from the same image.
+The default tolerance used by the main application is:
 
-For realistic evaluation, verification images should be different from enrollment images.
+```text
+0.60
+```
 
-## Privacy Handling
-All face images used for testing were kept locally on the testing machine. The repository contains only source code, documentation, and numerical evaluation results.
+---
 
-No face images, local database files, or biometric test data were uploaded to GitHub.
+## 2. Final Recorded Results
 
-## Summary
-Week 10 continued the Phase 4 evaluation work by documenting results and interpreting the system’s behavior under different threshold values. The system is functional, and the current evaluation helps prepare the project for final reporting and demonstration.
+| Test Case | Condition | Face Distance | Result at 0.60 | Observation |
+|---|---|---|---|---|
+| T01 | Good lighting | 0.4621 | Accepted | Clear front-facing image worked correctly |
+| T02 | Low lighting | 0.5176 | Accepted | Distance increased but remained acceptable |
+| T03 | Bright lighting | 0.4878 | Accepted | Verification still succeeded |
+| T04 | Side pose | N/A | No face detected | Side pose affected face detection |
+
+---
+
+## 3. Main Observations
+
+The evaluation showed that the system works best when the user provides a clear, front-facing face image.
+
+Good lighting gave the most reliable verification behavior. Low lighting increased the face distance, meaning the match became weaker, but the user was still accepted at the default tolerance value of `0.60`.
+
+Bright lighting was also accepted, although lighting changes can still affect recognition quality. The side pose test failed because no face was detected, showing that the current system is sensitive to face orientation.
+
+Overall, the default tolerance value of `0.60` was practical for the tested conditions.
+
+---
+
+## 4. Same Image Reuse Note
+
+If the exact same image used during enrollment is reused during verification, the face distance may become:
+
+```text
+0.0000
+```
+
+This is expected because both encodings come from the same image. However, this is not realistic for real attendance verification. A proper test should use a different verification image, preferably captured live using the camera.
+
+---
+
+## 5. Privacy Handling
+
+All testing was performed locally.
+
+Privacy precautions included:
+
+- Test face images were not uploaded to GitHub.
+- Local database files were not uploaded to GitHub.
+- Biometric encodings and test data were kept private.
+- Only numerical results were recorded in documentation.
+
+---
+
+## 6. Conclusion
+
+Phase 4 evaluation confirmed that the Secure Attendance System can verify an enrolled user under good, low, and bright lighting conditions using the default tolerance value of `0.60`.
+
+The main practical limitation observed was pose sensitivity, since the side-pose test resulted in no face detection. Future improvements should focus on better image quality validation, pose handling, larger testing datasets, and liveness detection.
