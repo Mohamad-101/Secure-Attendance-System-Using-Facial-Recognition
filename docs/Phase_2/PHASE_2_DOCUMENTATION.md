@@ -10,7 +10,7 @@
 
 **Phase:** Phase 2 — Enrollment, Verification, Attendance Logging, and Streamlit Dashboard
 
-**Timeline:** Week 3 – Week 4
+**Timeline:** June 21 – July 10
 
 ---
 
@@ -469,7 +469,6 @@ Although the Phase 2 MVP is functional, it still has limitations.
 | -------------------------------- | -------------------------------------------------------------------------- |
 | No full anti-spoofing yet        | The system may still accept a clear photo unless liveness checks are added |
 | Limited user testing             | The system has not yet been tested on a large group of users               |
-| Local database only              | SQLite is suitable for development but not final cloud deployment          |
 | No login system                  | Dashboard pages are not protected by admin authentication yet              |
 | No database encryption           | Stored face encodings are not encrypted in the current MVP                 |
 | Image-based verification         | The system uses captured/uploaded images, not continuous live video        |
